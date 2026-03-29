@@ -123,6 +123,18 @@ describe('execute', () => {
     expect(result).toEqual({ status: 201, body: { id: '1' } })
   })
 
+  it('does not send Content-Type header on GET requests', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve([])
+    })
+
+    await execute('http://localhost:3000', baseEndpoint, {}, '')
+
+    const [, options] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    expect(options.headers['Content-Type']).toBeUndefined()
+  })
+
   it('returns null body when response is not JSON', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       status: 204,

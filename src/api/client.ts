@@ -32,14 +32,15 @@ export async function execute(
     url.searchParams.set(k, v)
   }
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
-  }
+  const isBodyMethod = ['POST', 'PUT', 'PATCH'].includes(endpoint.method)
+
+  const headers: Record<string, string> = {}
   if (endpoint.auth && apiKey) {
     headers['X-API-Key'] = apiKey
   }
-
-  const isBodyMethod = ['POST', 'PUT', 'PATCH'].includes(endpoint.method)
+  if (isBodyMethod) {
+    headers['Content-Type'] = 'application/json'
+  }
   const response = await fetch(url.toString(), {
     method: endpoint.method,
     headers,
@@ -49,8 +50,12 @@ export async function execute(
   let body: unknown = null
   try {
     body = await response.json()
-  } catch {
-    body = null
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      body = null
+    } else {
+      throw err
+    }
   }
 
   return { status: response.status, body }
