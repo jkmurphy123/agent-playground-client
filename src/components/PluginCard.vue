@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { PluginDef } from '../types/spec'
 import EndpointPanel from './EndpointPanel.vue'
 
@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const expanded = ref(false)
-const count = props.plugin.endpoints.length
+const count = computed(() => props.plugin.endpoints.length)
 </script>
 
 <template>
