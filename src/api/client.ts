@@ -27,7 +27,8 @@ export async function execute(
     }
   }
 
-  const url = new URL(`${baseUrl}${path}`)
+  const base = baseUrl.replace(/\/$/, '')
+  const url = new URL(`${base}${path}`)
   for (const [k, v] of Object.entries(queryParams)) {
     url.searchParams.set(k, v)
   }

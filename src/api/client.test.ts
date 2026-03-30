@@ -145,4 +145,15 @@ describe('execute', () => {
 
     expect(result).toEqual({ status: 204, body: null })
   })
+
+  it('strips a trailing slash from baseUrl in the URL', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve([])
+    })
+    await execute('http://localhost:3000/', baseEndpoint, {}, '')
+    const [url] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    expect(url).not.toMatch(/localhost:3000\/\//)
+    expect(url).toContain('http://localhost:3000/actions/messages')
+  })
 })

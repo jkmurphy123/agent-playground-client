@@ -32,4 +32,14 @@ describe('fetchSpec', () => {
 
     await expect(fetchSpec('http://localhost:3000')).rejects.toThrow('Network error')
   })
+
+  it('strips a trailing slash from baseUrl before fetching', async () => {
+    const mockSpec = { plugins: [] }
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(mockSpec)
+    })
+    await fetchSpec('http://localhost:3000/')
+    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api-spec')
+  })
 })

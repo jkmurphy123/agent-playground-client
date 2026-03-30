@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { ref } from 'vue'
 import EndpointPanel from './EndpointPanel.vue'
 import type { EndpointDef } from '../types/spec'
@@ -88,7 +88,7 @@ describe('EndpointPanel', () => {
 
     await wrapper.find('[data-testid="param-text"]').setValue('hello')
     await wrapper.find('form').trigger('submit')
-    await wrapper.vm.$nextTick()
+    await flushPromises()
 
     expect(clientModule.execute).toHaveBeenCalledWith(
       'http://localhost:3000',
@@ -105,7 +105,7 @@ describe('EndpointPanel', () => {
     const wrapper = mountWithProvide(postEndpoint)
 
     await wrapper.find('form').trigger('submit')
-    await wrapper.vm.$nextTick()
+    await flushPromises()
 
     expect(wrapper.find('[data-testid="response-error"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="response-error"]').text()).toContain('Network error')
