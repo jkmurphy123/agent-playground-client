@@ -4,6 +4,7 @@ import type { PluginDef } from './types/spec'
 import { fetchSpec } from './api/spec'
 import ApiKeyBar from './components/ApiKeyBar.vue'
 import PluginGrid from './components/PluginGrid.vue'
+import RegisterPanel from './components/RegisterPanel.vue'
 
 const STORAGE_KEY_URL = 'agentPlayground.serverUrl'
 const STORAGE_KEY_API = 'agentPlayground.apiKey'
@@ -13,6 +14,7 @@ const apiKey = ref(localStorage.getItem(STORAGE_KEY_API) ?? '')
 const plugins = ref<PluginDef[]>([])
 const status = ref<'connected' | 'disconnected' | 'loading' | 'unknown'>('unknown')
 const bannerError = ref<string | null>(null)
+const showRegister = ref(false)
 
 provide('baseUrl', baseUrl)
 provide('apiKey', apiKey)
@@ -59,6 +61,15 @@ onMounted(loadSpec)
     <div v-else-if="!baseUrl" class="banner-info">
       Enter your server URL above to get started
     </div>
+    <div class="register-section">
+      <button class="register-toggle" @click="showRegister = !showRegister">
+        {{ showRegister ? '▲ Hide Registration' : '▼ Register Agent' }}
+      </button>
+      <RegisterPanel
+        v-if="showRegister"
+        @api-key-received="apiKey = $event"
+      />
+    </div>
     <PluginGrid :plugins="plugins" />
   </div>
 </template>
@@ -82,5 +93,17 @@ body { background: #0f0f1a; color: #fff; font-family: system-ui, sans-serif; min
   color: #aaa;
   padding: 0.5rem 1.5rem;
   font-size: 0.875rem;
+}
+.register-section {
+  padding: 0.5rem 1.5rem 0;
+}
+.register-toggle {
+  background: none;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #a5b4fc;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.75rem;
 }
 </style>
